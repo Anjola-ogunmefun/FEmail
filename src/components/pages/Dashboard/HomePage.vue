@@ -1,0 +1,398 @@
+<template>
+  <main>
+    <nav
+      class="flex static w-full items-center justify-between px-6 h-16 bg-white text-gray-700 border-b border-gray-200 z-10"
+    >
+      <div class="flex items-center">
+        <button class="mr-2" aria-label="Open Menu" @click="drawer">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            class="w-8 h-8"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <img src="../../../utils/undraw.svg" alt="Logo" class="h-auto w-24" />
+      </div>
+      <h1 class="flex text-lg font-semibold md:text-2xl ml-16 md:ml-20">
+        {{ userName }}
+      </h1>
+
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        class="w-10 h-8 flex ml-80 md:ml-auto"
+      >
+        <path
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+        ></path>
+      </svg>
+
+      <span
+        class="bg-black text-white text-xs py-1 font-bold px-2 -ml-6 mb-5 rounded-full"
+        v-if="unreadMail.length > 0"
+      >
+        {{ unreadMail.length }}
+      </span>
+
+      <!-- <div class="flex items-center">
+      <div class="hidden md:flex md:justify-between md:bg-transparent">
+        <button
+          title="Wishlist"
+          class="flex items-center p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
+        >
+          <svg
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            class="w-6 h-6 mr-2"
+          >
+            <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+          </svg>
+          <span>Wishlist</span>
+        </button>
+        <button
+          class="flex items-center p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
+        >
+          <svg
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="h-6 w-6"
+          >
+            <path
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+            ></path>
+          </svg>
+        </button>
+        <button
+          class="flex items-cente p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
+        >
+          <svg
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
+        <a
+          rel="noopener"
+          href="https://www.buymeacoffee.com/fayazahmed"
+          target="_blank"
+          title="Help me keep this site alive"
+          class="flex items-center  px-3 py-3 font-medium mr-2 text-center bg-orange-600 rounded text-white hover:bg-orange-700 focus:outline-none focus:bg-orange-400"
+        >
+          <img
+            class="mr-2 h-6 w-auto"
+            src="/sidebar/bmc.svg"
+            alt="Buy Me Coffee"
+          />
+          <p class="font-bold">
+            Buy me a Coffee
+          </p></a
+        >
+      </div>
+    </div> -->
+
+      <transition
+        enter-class="opacity-0"
+        enter-active-class="ease-out transition-medium"
+        enter-to-class="opacity-100"
+        leave-class="opacity-100"
+        leave-active-class="ease-out transition-medium"
+        leave-to-class="opacity-0"
+      >
+        <div
+          @keydown.esc="isOpen = false"
+          v-show="isOpen"
+          class="z-10 fixed inset-0 transition-opacity"
+        >
+          <div
+            @click="isOpen = false"
+            class="absolute inset-0 bg-black opacity-5"
+            tabindex="0"
+          ></div>
+        </div>
+      </transition>
+      <aside
+        class="transform top-0 left-0 w-64 bg-white fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 :md:{isOpen = true}"
+        :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
+      >
+        <span
+          @click="isOpen = false"
+          class="flex w-full items-center p-4 border-b"
+        >
+          <img
+            src="/logos/fox-hub.png"
+            alt="Logo"
+            class="h-auto w-32 mx-auto"
+          />
+        </span>
+
+        <span
+          @click="isOpen = false"
+          class="flex items-center p-4 hover:bg-gray-800 hover:text-white hover:img-white "
+          ><span class="mr-2">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              class="w-6 h-6"
+            >
+              <path
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
+            </svg>
+          </span>
+          <router-link to="/compose">Compose</router-link>
+        </span>
+
+        <span
+          @click="isOpen = false"
+          class="flex items-center p-4 hover:bg-gray-800 hover:text-white "
+          ><span class="mr-2">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              class="w-6 h-6"
+            >
+              <path
+                d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"
+              ></path>
+            </svg>
+          </span>
+
+          <router-link to="/inbox">Inbox</router-link>
+
+          <span
+            class="bg-gray-800 hover:bg-white hover:text-black text-white font-bold px-2 ml-2 rounded-full"
+            v-if="unreadMail.length > 0"
+          >
+            {{ unreadMail.length }}
+          </span>
+        </span>
+
+        <span
+          @click="isOpen = false"
+          class="flex items-center p-4 hover:bg-gray-800 hover:text-white "
+          ><span class="mr-2">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              class="w-6 h-6"
+            >
+              <path
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+              ></path>
+            </svg>
+          </span>
+          <router-link to="/sent">Sent</router-link>
+        </span>
+        <span
+          @click="isOpen = false"
+          class="flex items-center p-4 hover:bg-gray-800 hover:text-white "
+          ><span class="mr-2">
+            <svg
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              class="w-6 h-6"
+            >
+              <path
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              ></path>
+            </svg>
+          </span>
+          <router-link to="/draft">Draft</router-link>
+        </span>
+        <span
+          @click="isOpen = false"
+          class="flex items-center p-4 hover:bg-gray-800 hover:text-white "
+          ><span class="mr-2">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              class="w-6 h-6"
+            >
+              <path
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </span>
+          <router-link to="/bin">Bin</router-link>
+        </span>
+      </aside>
+    </nav>
+
+    <!-- <br>
+<br> -->
+    <!-- <h1 class="text-black font-semibold  text-xl ml-4 px-4 mt-6 -mb-3">Home</h1> -->
+    <section>
+      <h1 class="text-black font-semibold  text-xl ml-3 px-4 mt-4 mb-3">
+        Inbox
+      </h1>
+
+      <div v-if="myMail.length === 0 && !isLoading">
+        <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+          No mail for you yet!
+        </p>
+      </div>
+
+      <transition
+        v-else-if="showContent"
+        enter-active-class="animate__animated animate__bounce "
+        leave-active-class="animate__animated animate__slideInUp"
+      >
+        <mail-content :mail="selectedMail" @delete-mail="bin"></mail-content>
+      </transition>
+
+      <div v-else>
+        <base-template
+          v-for="mail in myMail"
+          :key="mail.id"
+          :id="mail.id"
+          :from="mail.from"
+          :subject="mail.subject"
+          :body="mail.body"
+          :read="mail.read"
+          @click="loadContent(mail)"
+        ></base-template>
+      </div>
+
+      <base-spinner v-if="isLoading && !error"></base-spinner>
+    </section>
+  </main>
+</template>
+
+<script>
+import MailContent from "./MailContent.vue";
+import BaseSpinner from "../../BaseComponents/BaseSpinner.vue";
+import BaseTemplate from "../../BaseComponents/BaseTemplate.vue";
+// import UnreadTemplate from "../../BaseComponents/UnreadTemplate.vue";
+
+export default {
+  props: ["from", "subject", "body", "read"],
+
+  components: { MailContent, BaseSpinner, BaseTemplate },
+
+  data() {
+    return {
+      isLoading: false,
+      error: null,
+      isOpen: false,
+      loggedInUser: "",
+      myMail: [],
+      showContent: false,
+      selectedMail: JSON.stringify(null),
+      unreadMail: [],
+      userName: "",
+    };
+  },
+
+  methods: {
+    drawer() {
+      this.isOpen = !this.isOpen;
+    },
+    async loadContent(mail) {
+      this.selectedMail = mail;
+      this.showContent = true;
+      await this.$store.dispatch("mail/removeUnread", mail);
+    },
+    async bin(mail) {
+      await this.$store.dispatch("mail/deleteMail", mail);
+    },
+    // back() {
+    //   return this.$router.go(-1);
+    // },
+  },
+  watch: {
+    isOpen: {
+      immediate: true,
+      handler(isOpen) {
+        if (process.client) {
+          if (isOpen) document.body.style.setProperty("overflow", "hidden");
+          else document.body.style.removeProperty("overflow");
+        }
+      },
+    },
+  },
+  async mounted() {
+    // document.addEventListener("keydown", (e) => {
+    //   if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
+    // });
+    this.isLoading = true;
+    try {
+      await this.$store.dispatch("mail/loadMail");
+      await this.$store.dispatch("user/findUser");
+
+      const inbox = this.$store.getters["mail/getInbox"];
+      this.loggedInUser = this.$store.getters["user/loggedInUser"];
+
+      for (let i = 0; i < inbox.length; i++) {
+        inbox[i].to.forEach((person) => {
+          if (person === this.loggedInUser) {
+            this.myMail.push(inbox[i]);
+          }
+        });
+      }
+      for (let i = 0; i < this.myMail.length; i++) {
+        if (this.myMail[i].read === false) {
+          this.unreadMail.push(this.myMail[i]);
+        }
+      }
+      console.log("unread mail", this.unreadMail);
+
+      await this.$store.dispatch("user/loadUsers");
+      const allUsers = this.$store.getters["user/allUsers"];
+      for (const key in allUsers) {
+        if (allUsers[key].email === this.loggedInUser) {
+          this.userName = allUsers[key].firstName;
+        }
+      }
+    } catch (err) {
+      this.error = err.message;
+    }
+    this.isLoading = false;
+  },
+};
+</script>

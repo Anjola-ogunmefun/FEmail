@@ -5,20 +5,32 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "vite"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
-    "vue": "^3.0.0"
+    "@tailwindcss/forms": "^0.3.3",
+    "@vueform/multiselect": "^2.0.1",
+    "@vueup/vue-quill": "^1.0.0-beta.7",
+    "animate.css": "^4.1.1",
+    "aws-sdk": "^2.936.0",
+    "bcrypt": "^5.0.1",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.10",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "autoprefixer": "^9.8.6",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "eslint-plugin-vue": "^7.0.0",
+    "postcss": "^7.0.36",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.4",
+    "vite": "^2.3.8"
   },
   "eslintConfig": {
     "root": true,
