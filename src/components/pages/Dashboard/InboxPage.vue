@@ -41,6 +41,7 @@
         :subject="mail.subject"
         :body="mail.body"
         :read="mail.read"
+        :userData="userData"
         @click="loadContent(mail)"
       ></base-template>
     </div>
@@ -65,7 +66,7 @@ export default {
       error: null,
       selectedMail: {},
       unreadMail: [],
-      isRead: "",
+      readValue: "",
       userData: "",
     };
   },
@@ -74,10 +75,24 @@ export default {
       this.selectedMail = mail;
       this.showContent = true;
       await this.$store.dispatch("mail/removeUnread", mail);
+      mail.read.forEach((recepient) => {
+        for (const key in recepient) {
+          if (this.userData === key) {
+            recepient[key] = true;
+          }
+        }
+      });
     },
     async bin(mail) {
-      await this.$store.dispatch("mail/deleteMail", mail);
-      window.location.reload();
+      await this.$store.dispatch("mail/firstDelete", mail);
+         mail.subDelete.forEach((recepient) => {
+        for (const key in recepient) {
+          if (this.userData === key) {
+            recepient[key] = true;
+          }
+        }
+      });
+      // window.location.reload();
     },
     back() {
       return this.$router.go(-1);
@@ -98,7 +113,6 @@ export default {
         if (this.loggedInUser === allUsers[key].email)
           this.userData = allUsers[key].id;
       }
-      console.log("id", this.userData);
 
       for (let i = 0; i < inbox.length; i++) {
         inbox[i].to.forEach((person) => {
@@ -106,20 +120,16 @@ export default {
             this.myMail.push(inbox[i]);
           }
         });
-        console.log("this mail", this.myMail);
       }
+      
       for (let i = 0; i < this.myMail.length; i++) {
         this.myMail[i].read.forEach((recepient) => {
-          for(const key in recepient){
-            console.log("rec", recepient[key])
-             if(this.userData === key && recepient[key] === false){
-               this.unreadMail.push(this.myMail[i])
-             }
+          for (const key in recepient) {
+            console.log("rec", recepient[key]);
+            if (this.userData === key && recepient[key] === false) {
+              this.unreadMail.push(this.myMail[i]);
+            }
           }
-        // if(this.userData === recepient ){
-          console.log('key',recepient)
-
-          // }
         });
       }
     } catch (err) {

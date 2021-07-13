@@ -1,28 +1,14 @@
 <template>
   <section>
-    <span>
-      <svg
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        class="w-6 h-6 mt-4 ml-6"
-        @click="back"
-        v-if="!showContent"
-      >
-        <path d="M15 19l-7-7 7-7"></path>
-      </svg>
-    </span>
-    <div class="flex">
-      <h1 class="text-black font-semibold text-xl ml-3 px-4 mt-4 mb-3">Bin</h1>
+
+    <div class="flex -mb-7">
+      <h1 class="text-black font-semibold text-xl ml-3 px-4 mt-4">Bin</h1>
       <span @click="clearBin" class="float-right p-4 has-tooltip ">
         <span class="tooltip rounded shadow-sm p-1  text-black -mt-8"
           >Clear all items in bin</span
         >
 
-        <!-- <span class="mr-2">
+        <span class="mr-2">
           <svg
             fill="none"
             stroke="currentColor"
@@ -37,9 +23,24 @@
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
             ></path>
           </svg>
-        </span> -->
+        </span>
       </span>
     </div>
+     <span>
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        class="w-6 h-6 mt-4 ml-6"
+        @click="back"
+        v-if="!showContent"
+      >
+        <path d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </span>
     <div v-if="myBin.length === 0 && !isLoading">
       <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
         Bin is empty!

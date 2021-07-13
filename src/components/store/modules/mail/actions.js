@@ -1,7 +1,7 @@
 export default {
   async addMail(context, payload) {
     // const userId = localStorage.getItem("userId");
-    console.log("send payload", payload.read);
+    console.log("send payload", payload);
     const mailData = {
       from: payload.from,
       to: payload.to,
@@ -9,6 +9,7 @@ export default {
       body: payload.body,
       draft: payload.draft,
       read: payload.read,
+      subDelete: payload.subDelete,
       delete: payload.delete,
     };
 
@@ -40,6 +41,7 @@ export default {
         body: newResponse.body,
         draft: newResponse.draft,
         read: newResponse.read,
+        subDelete: newResponse.subDelete,
         delete: newResponse.delete,
       });
     } else {
@@ -50,13 +52,22 @@ export default {
         body: newResponse.body,
         draft: newResponse.draft,
         read: newResponse.read,
+        subDelete: newResponse.subDelete,
         delete: newResponse.delete,
       });
     }
   },
 
   async loadMail(context) {
-    // const userId = localStorage.getItem("userId");
+    // const loggedInUser = context.rootGetters["user/loggedInUser"];
+    // const allUsers = context.rootGetters["user/allUsers"];
+
+    // console.log("userr", loggedInUser);
+    // let userData;
+
+    // for (const key in allUsers) {
+    //   if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
+    // }
     const response = await fetch(
       `https://femail-b0318-default-rtdb.firebaseio.com/Mails.json`
     );
@@ -67,31 +78,15 @@ export default {
       const error = new Error(responseData.message || "Failed to fetch!");
       throw error;
     }
-    //  const user = context.getters.loggedInUser
-    //   let myMail = []
-
-    //   console.log('user', user)
-    //   for (let i = 0; i < responseData.length; i++) {
-    //     responseData[i].to.forEach((person) => {
-    //       if (person === user) {
-    //         myMail.push(responseData[i]);
-    //       }
-    //     });
-    //           console.log("this mail",myMail);
-
-    //   }
-    // for (let i = 0; i < myMail.length; i++) {
-    //   if (this.myMail[i].read === false) {
-    //     this.unreadMail.push(this.myMail[i]);
-    //   }
-    // }
 
     const inbox = [];
     const draft = [];
     const unread = [];
     const deleted = [];
     for (const key in responseData) {
-      if (responseData[key].delete === true) {
+   
+
+      if (responseData[key].draft === false) {
         const mail = {
           id: key,
           to: responseData[key].to,
@@ -100,18 +95,7 @@ export default {
           body: responseData[key].body,
           draft: responseData[key].draft,
           read: responseData[key].read,
-          delete: responseData[key].delete,
-        };
-        deleted.unshift(mail);
-      } else if (responseData[key].draft === false) {
-        const mail = {
-          id: key,
-          to: responseData[key].to,
-          from: responseData[key].from,
-          subject: responseData[key].subject,
-          body: responseData[key].body,
-          draft: responseData[key].draft,
-          read: responseData[key].read,
+          subDelete: responseData[key].subDelete,
           delete: responseData[key].delete,
         };
         inbox.unshift(mail);
@@ -124,27 +108,28 @@ export default {
           body: responseData[key].body,
           draft: responseData[key].draft,
           read: responseData[key].read,
+          subDelete: responseData[key].subDelete,
           delete: responseData[key].delete,
         };
 
         draft.unshift(mail);
       }
     }
-    for (let i = 0; i < inbox.length; i++) {
-      if (inbox[i].read === false) {
-        const mail = {
-          id: inbox[i].id,
-          to: inbox[i].to,
-          from: inbox[i].from,
-          subject: inbox[i].subject,
-          body: inbox[i].body,
-          draft: inbox[i].draft,
-          read: inbox[i].read,
-          delete: inbox[i].delete,
-        };
-        unread.unshift(mail);
-      }
-    }
+    // for (let i = 0; i < inbox.length; i++) {
+    //   if (inbox[i].read === false) {
+    //     const mail = {
+    //       id: inbox[i].id,
+    //       to: inbox[i].to,
+    //       from: inbox[i].from,
+    //       subject: inbox[i].subject,
+    //       body: inbox[i].body,
+    //       draft: inbox[i].draft,
+    //       read: inbox[i].read,
+    //       delete: inbox[i].delete,
+    //     };
+    //     unread.unshift(mail);
+    //   }
+    // }
     console.log("inbox", inbox);
     console.log("deleted", deleted);
 
@@ -155,43 +140,25 @@ export default {
   },
 
   async removeUnread(context, mail) {
-    //  const userId = localStorage.getItem("userId");
-    await context.dispatch("user/loadUsers", null, { root: true });
-    // await context.dispatch("user/findUser",  null, { root: true });
-    const loggedInUser = context.getters.loggedInUser;
-    const allUsers = context.getters.allUsers;
-    console.log('user', loggedInUser)
-    console.log('all', allUsers)
+    const loggedInUser = context.rootGetters["user/loggedInUser"];
+    const allUsers = context.rootGetters["user/allUsers"];
+
     let userData;
 
     for (const key in allUsers) {
       if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
-      console.log({userData})
+      console.log({ userData });
     }
 
     const mailId = mail.id;
-    console.log('mail id', mailId)
 
     mail.read.forEach((recepient) => {
       for (const key in recepient) {
         if (userData === key) {
-          recepient[key] === true;
+          recepient[key] = true;
         }
       }
-      // if(this.userData === recepient ){
-      console.log("key", recepient);
-
-      // }
     });
-
-    // const mailData = {
-    //   from: mail.from,
-    //   to: mail.to,
-    //   subject: mail.subject,
-    //   body: mail.body,
-    //   draft: mail.draft,
-    //   read: true,
-    // };
 
     const response = await fetch(
       `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${mailId}.json`,
@@ -201,7 +168,6 @@ export default {
       }
     );
     const responseData = await response.json();
-    console.log(responseData.read);
     if (!response.ok) {
       const error = new Error(responseData.message || "Failed to fetch!");
       throw error;
@@ -220,6 +186,8 @@ export default {
       body: mail.body,
       draft: false,
       read: mail.read,
+      subDelete: mail.subDelete,
+      delete: mail.delete,
     };
     console.log("mail", mail);
 
@@ -237,30 +205,35 @@ export default {
     }
   },
 
-  async deleteMail(_, mail) {
-    // const userId = localStorage.getItem("userId");
+  async firstDelete(context, mail) {
+    const loggedInUser = context.rootGetters["user/loggedInUser"];
+    const allUsers = context.rootGetters["user/allUsers"];
+
+    let userData;
+
+    for (const key in allUsers) {
+      if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
+      console.log({ userData });
+    }
+
     const mailId = mail.id;
 
-    const mailData = {
-      from: mail.from,
-      to: mail.to,
-      subject: mail.subject,
-      body: mail.body,
-      draft: mail.draft,
-      read: mail.read,
-      delete: true,
-    };
-    console.log("mail", mail);
+    mail.subDelete.forEach((recepient) => {
+      for (const key in recepient) {
+        if (userData === key) {
+          recepient[key] = true;
+        }
+      }
+    });
 
     const response = await fetch(
       `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${mailId}.json`,
       {
         method: "PUT",
-        body: JSON.stringify(mailData),
+        body: JSON.stringify(mail),
       }
     );
     const responseData = await response.json();
-    console.log(responseData.read);
     if (!response.ok) {
       const error = new Error(responseData.message || "Failed to fetch!");
       throw error;
@@ -286,19 +259,5 @@ export default {
         }
       );
     });
-
-    //  const response = await fetch(
-    //     `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${userId}/${bin}.json`,
-    //    {
-    //      method: "DELETE",
-    //      body: JSON.stringify(mailData),
-    //    }
-    //  );
-    //  const responseData = await response.json();
-    //  console.log(responseData.read);
-    //  if (!response.ok) {
-    //    const error = new Error(responseData.message || "Failed to fetch!");
-    //    throw error;
-    //  }
   },
 };

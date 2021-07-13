@@ -21,8 +21,10 @@ export default {
       return this.$store.getters.didAutoLogout;
     },
   },
-  created() {
+  async created() {
     this.$store.dispatch("tryLogin");
+          await this.$store.dispatch("mail/loadMail");
+
   },
   watch: {
     didAutoLogout(curValue, oldValue) {

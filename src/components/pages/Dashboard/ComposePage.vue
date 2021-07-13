@@ -148,6 +148,8 @@ export default {
       showSent: false,
       showDraft: false,
       userRead: [],
+      firstDelete: [],
+      secondDelete: [],
       userData: [],
 
       multiSelect: {
@@ -171,32 +173,22 @@ export default {
     async saveMail(isDraft) {
       this.isLoading = true;
 
-        
-
       this.multiSelect.value.forEach((user) => {
         for (const key in this.userData) {
           if (this.userData[key].email === user) {
-            console.log("select user",this.userData[key]);
+            console.log("select user", this.userData[key]);
             const userId = this.userData[key].id;
-            console.log('select', userId)
+            console.log("select", userId);
             let obj = {};
             obj[userId] = false;
             this.userRead.push(obj);
+            this.firstDelete.push(obj);
+            this.secondDelete.push(obj);
           }
         }
       });
-      //  this.multiSelect.value.forEach((user) => {
-      //   console.log("select user",);
-      //     for (const key in a) {
-      //   this.multiSelect.options.push(allUsers[key].email);
-      //   console.log("all", allUsers[key].email);
-      // }
-      //   const userId = user.id;
-      //   let obj = [];
-      //   obj[userId] = false;
-      //   this.userRead.push(obj);
-      // });
-      console.log("read array", this.userRead);
+      console.log("first delete", this.firstDelete);
+      console.log("second delete", this.secondDelete);
 
       try {
         this.$store.dispatch("mail/addMail", {
@@ -206,7 +198,8 @@ export default {
           body: this.body.ops[0].insert,
           draft: isDraft,
           read: this.userRead,
-          delete: this.delete,
+          subDelete: this.firstDelete,
+          delete: this.secondDelete
         });
 
         this.multiSelect.value = [];

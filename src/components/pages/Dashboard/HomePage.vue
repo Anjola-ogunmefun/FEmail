@@ -17,9 +17,9 @@
             <path d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
-        <img src="../../../utils/undraw.svg" alt="Logo" class="h-auto w-24" />
+        <!-- <img src="../../../utils/logo2.png" alt="Logo" class="h-auto w-24" /> -->
       </div>
-      <h1 class="flex text-lg font-semibold md:text-2xl ml-16 md:ml-20">
+      <h1 class="flex text-lg font-semibold md:text-2xl md:ml-12">
         {{ userName }}
       </h1>
 
@@ -145,9 +145,9 @@
           class="flex w-full items-center p-4 border-b"
         >
           <img
-            src="/logos/fox-hub.png"
+            src="../../../utils/logo2.png"
             alt="Logo"
-            class="h-auto w-32 mx-auto"
+            class="h-14 w-22 mx-auto"
           />
         </span>
 
@@ -264,8 +264,7 @@
       </aside>
     </nav>
 
-    <!-- <br>
-<br> -->
+
     <!-- <h1 class="text-black font-semibold  text-xl ml-4 px-4 mt-6 -mb-3">Home</h1> -->
     <section>
       <h1 class="text-black font-semibold  text-xl ml-3 px-4 mt-4 mb-3">
@@ -273,10 +272,10 @@
       </h1>
 
       <div v-if="myMail.length === 0 && !isLoading">
-        <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
-          No mail for you yet!
-        </p>
-      </div>
+          <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+            No mail for you yet!
+          </p>
+        </div>
 
       <transition
         v-else-if="showContent"
@@ -295,12 +294,14 @@
           :subject="mail.subject"
           :body="mail.body"
           :read="mail.read"
+          :userData="userData"
           @click="loadContent(mail)"
         ></base-template>
       </div>
 
       <base-spinner v-if="isLoading && !error"></base-spinner>
     </section>
+    <!-- <inbox-page></inbox-page> -->
   </main>
 </template>
 
@@ -308,12 +309,12 @@
 import MailContent from "./MailContent.vue";
 import BaseSpinner from "../../BaseComponents/BaseSpinner.vue";
 import BaseTemplate from "../../BaseComponents/BaseTemplate.vue";
-// import UnreadTemplate from "../../BaseComponents/UnreadTemplate.vue";
+// import InboxPage from "./InboxPage.vue";
 
 export default {
   props: ["from", "subject", "body", "read"],
 
-  components: { MailContent, BaseSpinner, BaseTemplate },
+  components: { BaseSpinner, MailContent,BaseTemplate },
 
   data() {
     return {
@@ -337,13 +338,26 @@ export default {
       this.selectedMail = mail;
       this.showContent = true;
       await this.$store.dispatch("mail/removeUnread", mail);
+       mail.read.forEach((recepient) => {
+        for (const key in recepient) {
+          if (this.userData === key) {
+            recepient[key] = true;
+          }
+        }
+      });
     },
     async bin(mail) {
-      await this.$store.dispatch("mail/deleteMail", mail);
+      await this.$store.dispatch("mail/firstDelete", mail);
+         mail.forEach((recepient) => {
+        for (const key in recepient) {
+          if (this.userData === key) {
+            recepient[key] = true;
+          }
+        }
+      });
+      // window.location.reload();
     },
-    // back() {
-    //   return this.$router.go(-1);
-    // },
+  
   },
   watch: {
     isOpen: {
@@ -360,13 +374,24 @@ export default {
     // document.addEventListener("keydown", (e) => {
     //   if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
     // });
+
     this.isLoading = true;
     try {
       await this.$store.dispatch("mail/loadMail");
       await this.$store.dispatch("user/findUser");
-
+      await this.$store.dispatch("user/loadUsers");
+      const allUsers = this.$store.getters["user/allUsers"];
       const inbox = this.$store.getters["mail/getInbox"];
       this.loggedInUser = this.$store.getters["user/loggedInUser"];
+
+      for (const key in allUsers) {
+        if (this.loggedInUser === allUsers[key].email)
+          this.userData = allUsers[key].id;
+        if (allUsers[key].email === this.loggedInUser) {
+          this.userName = allUsers[key].firstName;
+        }
+      }
+      console.log("id", this.userData);
 
       for (let i = 0; i < inbox.length; i++) {
         inbox[i].to.forEach((person) => {
@@ -374,16 +399,18 @@ export default {
             this.myMail.push(inbox[i]);
           }
         });
+        console.log("this mail", this.myMail);
       }
       for (let i = 0; i < this.myMail.length; i++) {
-        if (this.myMail[i].read === false) {
-          this.unreadMail.push(this.myMail[i]);
-        }
+        this.myMail[i].read.forEach((recepient) => {
+          for (const key in recepient) {
+            if (this.userData === key && recepient[key] === false) {
+              this.unreadMail.push(this.myMail[i]);
+            }
+          }
+        });
       }
-      console.log("unread mail", this.unreadMail);
 
-      await this.$store.dispatch("user/loadUsers");
-      const allUsers = this.$store.getters["user/allUsers"];
       for (const key in allUsers) {
         if (allUsers[key].email === this.loggedInUser) {
           this.userName = allUsers[key].firstName;

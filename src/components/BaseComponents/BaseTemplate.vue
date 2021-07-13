@@ -1,10 +1,11 @@
 <template>
   <main>
-    <unread-template 
-    :from="from"
-    :subject="subject"
-    :body="body"
-    v-if="!read"></unread-template>
+    <unread-template
+      :from="from"
+      :subject="subject"
+      :body="body"
+      v-if="!isRead"
+    ></unread-template>
     <div
       class="border-t border-b mb-6 container shadow-l border-gray-300 bg-white p-4 flex flex-col justify-between leading-normal"
       v-else
@@ -40,15 +41,30 @@
 </template>
 
 <script>
-import UnreadTemplate from "./UnreadTemplate.vue"
+import UnreadTemplate from "./UnreadTemplate.vue";
 export default {
-  props: ["from", "subject", "body", "read"],
-  components:{
-    UnreadTemplate
+  props: ["from", "subject", "body", "read", "userData"],
+  components: {
+    UnreadTemplate,
+  },
+  data() {
+    return {
+      isRead: false,
+    };
   },
   mounted() {
-    this.$store.getters["mail/getInbox"];
+    // const inbox = this.$store.getters["mail/getInbox"];
 
+    this.read.forEach((recepient) => {
+      for (const key in recepient) {
+        if (this.userData === key && recepient[key] === true) {
+          this.isRead = true;
+          console.log('base', recepient[key])
+          return
+        }
+      }
+      console.log("is read", this.isRead);
+    });
   },
 };
 </script>

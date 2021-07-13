@@ -7,6 +7,8 @@ export default {
       body: payload.body,
       draft: payload.draft,
       read: payload.read,
+      subDelete: payload.subDelete,
+      delete: payload.delete,
     });
   },
   setInbox(state, payload) {
@@ -21,6 +23,8 @@ export default {
       to: payload.to,
       subject: payload.subject,
       body: payload.body,
+      subDelete: payload.subDelete,
+      delete: payload.delete,
     });
   },
   setUnread(state, payload) {
