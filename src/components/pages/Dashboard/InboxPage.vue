@@ -16,19 +16,15 @@
       </svg>
     </span>
 
-    <h1 class="text-black font-semibold  text-xl ml-3 px-4 mt-4 mb-3">Inbox</h1>
+    <h1 class="text-black font-semibold  text-xl md:text-3xl ml-3 px-4 mt-4 mb-3">Inbox</h1>
 
     <div v-if="myMail.length === 0 && !isLoading">
-      <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+      <p class="text-black font-medium text-lg  md:text-2xl px-4 mb-2 mt-24 text-center">
         No mail for you yet!
       </p>
     </div>
 
-    <transition
-      v-else-if="showContent"
-      enter-active-class="animate__animated animate__bounce "
-      leave-active-class="animate__animated animate__slideInUp"
-    >
+    <transition v-else-if="showContent">
       <mail-content :mail="selectedMail" @delete-mail="bin"></mail-content>
     </transition>
 
@@ -85,14 +81,14 @@ export default {
     },
     async bin(mail) {
       await this.$store.dispatch("mail/firstDelete", mail);
-         mail.subDelete.forEach((recepient) => {
+      mail.subDelete.forEach((recepient) => {
         for (const key in recepient) {
           if (this.userData === key) {
             recepient[key] = true;
           }
         }
       });
-      // window.location.reload();
+      window.location.reload();
     },
     back() {
       return this.$router.go(-1);
@@ -106,7 +102,6 @@ export default {
       await this.$store.dispatch("user/loadUsers");
       const allUsers = this.$store.getters["user/allUsers"];
       const inbox = this.$store.getters["mail/getInbox"];
-      console.log({ inbox });
       this.loggedInUser = this.$store.getters["user/loggedInUser"];
 
       for (const key in allUsers) {
@@ -121,11 +116,10 @@ export default {
           }
         });
       }
-      
+
       for (let i = 0; i < this.myMail.length; i++) {
         this.myMail[i].read.forEach((recepient) => {
           for (const key in recepient) {
-            console.log("rec", recepient[key]);
             if (this.userData === key && recepient[key] === false) {
               this.unreadMail.push(this.myMail[i]);
             }
@@ -136,8 +130,6 @@ export default {
       this.error = err.message;
     }
     this.isLoading = false;
-    console.log("mymail", this.myMail);
-    console.log("unread", this.unreadMail);
   },
 };
 </script>
@@ -149,8 +141,8 @@ export default {
 .slide-fade-leave-active {
   transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
 }
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+.slide-fade-enter,
+.slide-fade-leave-to {
   transform: translateX(10px);
   opacity: 0;
 }

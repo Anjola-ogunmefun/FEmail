@@ -5,9 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "dev": "vite"
-  },
+    "lint": "vue-cli-service lint"
+    },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.3",
     "@vueform/multiselect": "^2.0.1",

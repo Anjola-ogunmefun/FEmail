@@ -14,8 +14,8 @@
       </h1>
 
       <h1 class="text-lg md:text-xl max-w-sm md:max-w-md md:ml-52 -mt-20">
-        Enter the email associated with your account and we'll send an email with
-        instructions to reset your password.
+        Enter the email associated with your account and we'll send an email
+        with instructions to reset your password.
       </h1>
 
       <div class="md:px-52 md:-mt-12">
@@ -84,7 +84,7 @@ export default {
       } catch (err) {
         this.error = err.message;
       }
-      this.isLoading = false
+      this.isLoading = false;
     },
     handleError() {
       this.error = false;

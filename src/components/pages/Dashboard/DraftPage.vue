@@ -4,6 +4,16 @@
       <p>{{ error }}</p>
     </base-dialog>
 
+    <teleport to="body">
+      <transition name="modal">
+        <confirm-modal
+          v-if="confirmModal"
+          @close="confirmModal = false"
+          @end="sendMail"
+        ></confirm-modal>
+      </transition>
+    </teleport>
+
     <span>
       <svg
         fill="none"
@@ -20,7 +30,7 @@
       </svg>
     </span>
 
-    <h1 class="text-black font-semibold  text-xl ml-3 px-4 mt-4 mb-3">
+    <h1 class="text-black font-semibold  text-xl md:text-3xl ml-3 px-4 mt-4 mb-3">
       Drafts
     </h1>
 
@@ -39,11 +49,8 @@
       </svg>
     </span>
 
-    <div v-if="showContent"
-     class="ml-8 mt-4 mr-8 border-none h-auto">
-      <span
-        @click="bin"
-        class="float-right"
+    <div v-if="showContent" class="ml-8 mt-4 mr-8 border-none h-auto">
+      <span @click="bin" class="float-right"
         ><span class="mr-2">
           <svg
             fill="none"
@@ -66,7 +73,7 @@
     </base-alert>
 
     <div v-if="myDraft.length === 0 && !isLoading">
-      <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+      <p class="text-black font-medium text-lg md:text-2xl px-4 mb-2 mt-24 text-center">
         Draft is empty!
       </p>
     </div>
@@ -117,8 +124,9 @@
         <QuillEditor
           theme="snow"
           placeholder="Compose mail"
-          style="height:200px; max-width:32rem;"
-          v-model:content="body[0].innerHTML"
+          style="height:200px;"
+          @ready="onEditorReady($event)"
+          v-model:content="body"
           class="editor box"
         />
 
@@ -130,7 +138,7 @@
         <div class="grid-flow-row mt-6 container">
           <button
             class="row-span-2 bg-transparent hover:bg-gray-800 text-xs md:text-sm text-black font-semibold hover:text-white py-2 px-6 border border-gray-800 hover:border-transparent rounded-lg"
-            @click.prevent="sendMail"
+            @click.prevent="confirmModal = true"
           >
             Send
           </button>
@@ -158,6 +166,7 @@ import GeneralTemplate from "../../BaseComponents/GeneralTemplate.vue";
 import BaseSpinner from "../../BaseComponents/BaseSpinner.vue";
 import BaseDialog from "../../BaseComponents/BaseDialog.vue";
 import BaseAlert from "../../BaseComponents/BaseAlert.vue";
+import ConfirmModal from "../../BaseComponents/ConfirmModal.vue";
 import Multiselect from "@vueform/multiselect";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -168,6 +177,7 @@ export default {
     BaseSpinner,
     BaseDialog,
     BaseAlert,
+    ConfirmModal,
     Multiselect,
     QuillEditor,
   },
@@ -181,6 +191,7 @@ export default {
       showContent: false,
       showAlert: false,
       inputIsValid: true,
+      confirmModal: false,
       body: "",
       sender: "",
       multiSelect: {
@@ -202,11 +213,13 @@ export default {
       this.selectedMail = mail;
       this.showContent = true;
       this.body = this.selectedMail.body;
-      console.log("body", this.body);
+    },
+    onEditorReady(e) {
+      e.container.querySelector(".ql-blank").innerHTML = this.selectedMail.body;
     },
     async bin(mail) {
-      await this.$store.dispatch("mail/deleteMail", mail);
-       window.location.reload();
+      await this.$store.dispatch("mail/firstDelete", mail);
+      window.location.reload();
     },
     handleError() {
       this.error = null;
@@ -217,6 +230,7 @@ export default {
     async sendMail() {
       this.isLoading = true;
       this.inputIsValid = true;
+      this.confirmModal = false;
 
       if (
         this.selectedMail.to.length < 1 ||
@@ -226,28 +240,18 @@ export default {
         this.inputIsValid = false;
         return;
       }
-      const mail = this.selectedMail
-  console.log('send mail', mail)
-
+      const mail = this.selectedMail;
       try {
-        await this.$store.dispatch("mail/addMail", {
-          from: mail.from,
-          to: mail.to,
-          subject: mail.subject,
-          body: mail.body,
-          draft: false,
-          read: mail.read,
-        });
+        await this.$store.dispatch("mail/removeDraft", mail);
 
         this.showAlert = true;
-
-        await this.$store.dispatch("mail/removeDraft", mail);
 
         this.multiSelect.value = [];
         this.subject = "";
         this.body = document.getElementsByClassName("editor");
         this.body[0].innerHTML = "";
 
+        window.location.reload();
       } catch (err) {
         this.error = err.message;
       }
@@ -257,6 +261,9 @@ export default {
 
   async mounted() {
     this.isLoading = true;
+    this.body = document.getElementsByClassName("editor");
+    this.body = this.selectedMail.body;
+
     try {
       await this.$store.dispatch("mail/loadMail");
       await this.$store.dispatch("user/findUser");
@@ -272,7 +279,6 @@ export default {
       await this.$store.dispatch("user/findUser");
       this.sender = this.$store.getters["user/loggedInUser"];
 
-      //fetch all registered user email
       await this.$store.dispatch("user/loadUsers");
       const allUsers = this.$store.getters["user/allUsers"];
       allUsers.forEach((user) => {
@@ -291,4 +297,8 @@ export default {
 };
 </script>
 
-<style src="@vueform/multiselect/themes/default.css"></style>
+<style src="@vueform/multiselect/themes/default.css">
+.box {
+  width: auto;
+}
+</style>

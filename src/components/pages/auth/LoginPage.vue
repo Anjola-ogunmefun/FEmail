@@ -48,8 +48,11 @@
         </p>
       </div>
       <div>
-            <div class="text-center -mt-16">
-         <p>Forgot password?  Rest your password</p> <router-link to="/reset_pswd" class="underline text-blue-600">here</router-link>
+        <div class="text-center -mt-16">
+          <p>Forgot password? Rest your password</p>
+          <router-link to="/reset_pswd" class="underline text-blue-600"
+            >here</router-link
+          >
         </div>
 
         <button
@@ -101,9 +104,9 @@ export default {
           email: this.email,
           password: this.password,
         });
-        
+
         await this.$store.dispatch("user/findUser");
-        
+
         this.isLoading = false;
 
         this.$router.replace("/home");

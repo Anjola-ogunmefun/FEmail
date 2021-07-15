@@ -16,10 +16,10 @@
       </svg>
     </span>
 
-    <h1 class="text-black font-semibold text-xl ml-3 px-4 mt-4 mb-3">Sent</h1>
+    <h1 class="text-black font-semibold text-xl md:text-3xl ml-3 px-4 mt-4 mb-3">Sent</h1>
 
     <div v-if="myMail.length === 0 && !isLoading">
-      <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+      <p class="text-black font-medium text-lg md:text-2xl px-4 mb-2 mt-24 text-center">
         No mail sent yet!
       </p>
     </div>
@@ -57,7 +57,7 @@ export default {
       myMail: [],
       isLoading: false,
       error: null,
-      selectedMail: JSON.stringify(null),
+      selectedMail: {},
       showContent: false,
     };
   },
@@ -67,7 +67,7 @@ export default {
       this.showContent = true;
     },
     async bin(mail) {
-      await this.$store.dispatch("mail/deleteMail", mail);
+      await this.$store.dispatch("mail/firstDelete", mail);
       window.location.reload();
     },
     back() {

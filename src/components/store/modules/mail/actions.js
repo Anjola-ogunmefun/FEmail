@@ -1,7 +1,5 @@
 export default {
   async addMail(context, payload) {
-    // const userId = localStorage.getItem("userId");
-    console.log("send payload", payload);
     const mailData = {
       from: payload.from,
       to: payload.to,
@@ -22,15 +20,10 @@ export default {
     );
     const newResponse = await response.json();
 
-    console.log("response", response);
-    console.log("new response", newResponse);
-
     if (!response.ok) {
       const error = new Error(
         newResponse.error.message || "Failed to add mail"
       );
-      console.log("error", newResponse.error.message);
-
       throw error;
     }
     if (newResponse.draft === false) {
@@ -59,21 +52,23 @@ export default {
   },
 
   async loadMail(context) {
-    // const loggedInUser = context.rootGetters["user/loggedInUser"];
-    // const allUsers = context.rootGetters["user/allUsers"];
+    await context.dispatch("user/findUser", null, { root: true });
+    await context.dispatch("user/loadUsers", null, { root: true });
 
-    // console.log("userr", loggedInUser);
-    // let userData;
+    const loggedInUser = context.rootGetters["user/loggedInUser"];
+    const allUsers = context.rootGetters["user/allUsers"];
 
-    // for (const key in allUsers) {
-    //   if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
-    // }
+    let userData;
+
+    for (const key in allUsers) {
+      if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
+    }
+
     const response = await fetch(
       `https://femail-b0318-default-rtdb.firebaseio.com/Mails.json`
     );
     let responseData = [];
     responseData = await response.json();
-    console.log("response", responseData);
     if (!response.ok) {
       const error = new Error(responseData.message || "Failed to fetch!");
       throw error;
@@ -84,9 +79,39 @@ export default {
     const unread = [];
     const deleted = [];
     for (const key in responseData) {
-   
+      let verify = false;
+      let permDelete = false;
 
-      if (responseData[key].draft === false) {
+      responseData[key].delete.forEach((recepient) => {
+        for (const ind in recepient) {
+          if (userData === ind && recepient[ind] === true) {
+            permDelete = true;
+          }
+        }
+      });
+
+      responseData[key].subDelete.forEach((recepient) => {
+        for (const val in recepient) {
+          if (!permDelete && userData === val && recepient[val] === true) {
+            verify = true;
+
+            const mail = {
+              id: key,
+              to: responseData[key].to,
+              from: responseData[key].from,
+              subject: responseData[key].subject,
+              body: responseData[key].body,
+              draft: responseData[key].draft,
+              read: responseData[key].read,
+              subDelete: responseData[key].subDelete,
+              delete: responseData[key].delete,
+            };
+            deleted.unshift(mail);
+          }
+        }
+      });
+
+      if (!verify && !permDelete && responseData[key].draft === false) {
         const mail = {
           id: key,
           to: responseData[key].to,
@@ -99,7 +124,8 @@ export default {
           delete: responseData[key].delete,
         };
         inbox.unshift(mail);
-      } else {
+      }
+      else if(!verify && !permDelete && responseData[key].draft === true) {
         const mail = {
           id: key,
           to: responseData[key].to,
@@ -115,23 +141,6 @@ export default {
         draft.unshift(mail);
       }
     }
-    // for (let i = 0; i < inbox.length; i++) {
-    //   if (inbox[i].read === false) {
-    //     const mail = {
-    //       id: inbox[i].id,
-    //       to: inbox[i].to,
-    //       from: inbox[i].from,
-    //       subject: inbox[i].subject,
-    //       body: inbox[i].body,
-    //       draft: inbox[i].draft,
-    //       read: inbox[i].read,
-    //       delete: inbox[i].delete,
-    //     };
-    //     unread.unshift(mail);
-    //   }
-    // }
-    console.log("inbox", inbox);
-    console.log("deleted", deleted);
 
     context.commit("setInbox", inbox);
     context.commit("setDraft", draft);
@@ -147,7 +156,6 @@ export default {
 
     for (const key in allUsers) {
       if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
-      console.log({ userData });
     }
 
     const mailId = mail.id;
@@ -174,34 +182,31 @@ export default {
     }
   },
 
-  async removeDraft(payload, mail) {
-    // const userId = localStorage.getItem("userId");
+  async removeDraft(context, mail) {
     const mailId = mail.id;
-    console.log("mailid", mailId);
+    await context.dispatch("mail/loadMail", null , {root:true});
 
-    const mailData = {
-      from: mail.from,
-      to: mail.to,
-      subject: mail.subject,
-      body: mail.body,
-      draft: false,
-      read: mail.read,
-      subDelete: mail.subDelete,
-      delete: mail.delete,
-    };
-    console.log("mail", mail);
+    const allDrafts = context.rootGetters["mail/getDraft"];
 
-    const response = await fetch(
-      `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${mailId}.json`,
-      {
-        method: "PUT",
-        body: JSON.stringify(mailData),
+    for (const key in allDrafts) {
+      if (mailId === allDrafts[key].id){
+        mail.draft = false
+
+        const response = await fetch(
+          `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${mailId}.json`,
+          {
+            method: "PUT",
+            body: JSON.stringify(mail),
+          }
+        );
+
+        const responseData = await response.json();
+        if (!response.ok) {
+          const error = new Error(responseData.message || "Failed to fetch!");
+          throw error;
+        }
       }
-    );
-    const responseData = await response.json();
-    if (!response.ok) {
-      const error = new Error(responseData.message || "Failed to fetch!");
-      throw error;
+
     }
   },
 
@@ -213,7 +218,6 @@ export default {
 
     for (const key in allUsers) {
       if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
-      console.log({ userData });
     }
 
     const mailId = mail.id;
@@ -241,23 +245,69 @@ export default {
   },
 
   async clearBin(context) {
-    // const userId = localStorage.getItem("userId");
+    const loggedInUser = context.rootGetters["user/loggedInUser"];
+    const allUsers = context.rootGetters["user/allUsers"];
+
+    let userData;
+
+    for (const key in allUsers) {
+      if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
+    }
+
     let bin = [];
     bin = await context.getters.getDeleted;
-    console.log("bin", bin);
 
     bin.forEach((mail) => {
       const binId = mail.id;
-      console.log({ binId });
-      console.log("action", mail);
+      mail.delete.forEach((recepient) => {
+        for (const key in recepient) {
+          if (userData === key) {
+            recepient[key] = true;
+          }
+        }
+      });
 
       fetch(
         `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${binId}.json`,
         {
-          method: "DELETE",
+          method: "PUT",
           body: JSON.stringify(mail),
         }
       );
     });
+  },
+
+  async removeOne(context, mail) {
+    const loggedInUser = context.rootGetters["user/loggedInUser"];
+    const allUsers = context.rootGetters["user/allUsers"];
+
+    let userData;
+
+    for (const key in allUsers) {
+      if (loggedInUser === allUsers[key].email) userData = allUsers[key].id;
+    }
+
+    const mailId = mail.id;
+
+    mail.delete.forEach((recepient) => {
+      for (const key in recepient) {
+        if (userData === key) {
+          recepient[key] = true;
+        }
+      }
+    });
+
+    const response = await fetch(
+      `https://femail-b0318-default-rtdb.firebaseio.com/Mails/${mailId}.json`,
+      {
+        method: "PUT",
+        body: JSON.stringify(mail),
+      }
+    );
+    const responseData = await response.json();
+    if (!response.ok) {
+      const error = new Error(responseData.message || "Failed to fetch!");
+      throw error;
+    }
   },
 };

@@ -161,7 +161,7 @@ export default {
           email: this.email,
           firstName: this.firstName,
           lastName: this.lastName,
-          displayName : this.firstName
+          displayName: this.firstName,
         });
         this.isLoading = false;
         this.alert = true;

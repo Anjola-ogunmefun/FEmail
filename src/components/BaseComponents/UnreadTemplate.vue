@@ -18,13 +18,13 @@
           ></path>
         </svg>
       </span>
-      <h1 class="text-red text-xl font-bold px-4">{{ from }}</h1>
+      <h1 class="text-red text-xl md:text-2xl font-bold px-4">{{ from }}</h1>
     </span>
     <div class="mb-4 ml-16">
-      <div class="text-black font-medium text-lg px-2 -mt-3 mb-2">
+      <div class="text-black font-medium text-lg md:text-2xl px-2 -mt-3 mb-2">
         {{ subject }}
       </div>
-      <p class="text-black text-base px-2 truncate max-w-full">
+      <p class="text-black text-base md:text-xl px-2 truncate max-w-full">
         {{ body }}
       </p>
     </div>

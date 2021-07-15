@@ -8,7 +8,7 @@
       <div></div>
       <div></div>
       <div></div>
-      <div></div> 
+      <div></div>
     </div>
   </div>
   <p>Please wait..</p>

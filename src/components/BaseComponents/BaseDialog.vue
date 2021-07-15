@@ -1,6 +1,10 @@
 <template>
   <teleport to="body">
-    <div v-if="show" @click="tryClose" class="backdrop fixed h-screen w-full z-10 bg-gray-900"></div>
+    <div
+      v-if="show"
+      @click="tryClose"
+      class="backdrop fixed h-screen w-full z-10 bg-gray-900"
+    ></div>
     <transition name="dialog">
       <dialog open v-if="show">
         <header class="bg-gray-600 text-white w-full p-4">
@@ -38,13 +42,13 @@ export default {
       default: false,
     },
   },
-  emits: ['close'],
+  emits: ["close"],
   methods: {
     tryClose() {
       if (this.fixed) {
         return;
       }
-      this.$emit('close');
+      this.$emit("close");
     },
   },
 };

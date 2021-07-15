@@ -52,14 +52,11 @@
             ></path>
           </svg>
         </span>
-        <!-- <h1 v-if="mail.to" class="text-xl font-medium px-1 truncate">
-          To: {{ mail.to[0] }}
-        </h1> -->
-        <h1 class="text-xl font-medium px-1 truncate">{{ mail.from }}</h1>
+        <h1 class="text-xl md:text-2xl font-medium px-1 truncate">{{ mail.from }}</h1>
       </span>
 
       <div
-        class="items-center md:text-lg text-base leading-loose ml-8 mr-5 mb-8"
+        class="items-center md:text-xl text-base leading-loose ml-8 mr-5 mb-8"
       >
         {{ mail.body }}
       </div>

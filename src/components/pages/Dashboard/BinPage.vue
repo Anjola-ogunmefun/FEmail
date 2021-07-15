@@ -1,10 +1,9 @@
 <template>
   <section>
-
     <div class="flex -mb-7">
-      <h1 class="text-black font-semibold text-xl ml-3 px-4 mt-4">Bin</h1>
+      <h1 class="text-black font-semibold text-xl  md:text-3xl ml-3 px-4 mt-4">Bin</h1>
       <span @click="clearBin" class="float-right p-4 has-tooltip ">
-        <span class="tooltip rounded shadow-sm p-1  text-black -mt-8"
+        <span class="tooltip rounded shadow-sm p-1  md:text-xl text-black -mt-8"
           >Clear all items in bin</span
         >
 
@@ -26,7 +25,7 @@
         </span>
       </span>
     </div>
-     <span>
+    <span>
       <svg
         fill="none"
         stroke="currentColor"
@@ -42,12 +41,16 @@
       </svg>
     </span>
     <div v-if="myBin.length === 0 && !isLoading">
-      <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
+      <p class="text-black font-medium text-lg md:text-2xl px-4 mb-2 mt-24 text-center">
         Bin is empty!
       </p>
     </div>
 
-    <mail-content v-else-if="showContent" :mail="selectedMail" @delete-mail="bin"></mail-content>
+    <mail-content
+      v-else-if="showContent"
+      :mail="selectedMail"
+      @delete-mail="bin"
+    ></mail-content>
 
     <div v-else>
       <general-template
@@ -85,16 +88,14 @@ export default {
       this.selectedMail = mail;
       this.showContent = true;
     },
-      async bin() {
-        const mail = this.selectedMail
-      await this.$store.dispatch("mail/deleteMail", mail);
-      console.log('delete mail', mail)
-      //  window.location.reload();
+    async bin() {
+      const mail = this.selectedMail;
+      await this.$store.dispatch("mail/removeOne", mail);
+      window.location.reload();
     },
     async clearBin() {
       await this.$store.dispatch("mail/clearBin");
-      //  window.location.reload();
-
+      window.location.reload();
     },
     back() {
       return this.$router.go(-1);
@@ -107,7 +108,6 @@ export default {
       await this.$store.dispatch("mail/loadMail");
       this.myBin = this.$store.getters["mail/getDeleted"];
       this.$router.replace("/bin");
-      console.log("mybin", this.myBin);
     } catch (err) {
       this.error = err.message;
     }

@@ -4,6 +4,16 @@
       <p>{{ error }}</p>
     </base-dialog>
 
+    <teleport to="body">
+      <transition name="modal">
+        <confirm-modal
+          v-if="confirmModal"
+          @close="confirmModal = false"
+          @end="saveInbox"
+        ></confirm-modal>
+      </transition>
+    </teleport>
+
     <span>
       <svg
         fill="none"
@@ -19,7 +29,7 @@
       </svg>
     </span>
     <h1
-      class="text-black font-semibold text-xl md:text-2xl ml-3 md:-ml-3 px-4 mt-4 mb-3"
+      class="text-black font-semibold text-xl md:text-3xl ml-3 md:-ml-3 px-4 mt-4 mb-3"
     >
       Compose
     </h1>
@@ -35,11 +45,6 @@
 
     <section class="grid container antialiased h-screen w-full">
       <div class="w-full mt-6 ">
-        <!-- <header
-          class="bg-gray-800 text-white w-full p-2 md:text-lg rounded-t-xl"
-        >
-          <p>New Message</p>
-        </header> -->
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div class="flex mb-4 items-center border-b border-gray-700">
             <p class="flex-2 opacity-50 mr-4 mt-3">To</p>
@@ -83,7 +88,7 @@
             <QuillEditor
               theme="snow"
               placeholder="Compose mail"
-              style="height:200px; max-width:32rem;"
+              style="height:200px"
               v-model:content="body"
               class="editor box"
             />
@@ -99,7 +104,7 @@
             <div class="grid-flow-row mt-6 container">
               <button
                 class="row-span-2 bg-transparent hover:bg-gray-800 text-xs md:text-sm text-black font-semibold hover:text-white py-2 px-6 border border-gray-800 hover:border-transparent rounded-lg"
-                @click.prevent="saveInbox"
+                @click.prevent="confirmModal = true"
               >
                 Send
               </button>
@@ -123,6 +128,7 @@ import Multiselect from "@vueform/multiselect";
 import BaseDialog from "../../BaseComponents/BaseDialog.vue";
 import BaseSpinner from "../../BaseComponents/BaseSpinner.vue";
 import BaseAlert from "../../BaseComponents/BaseAlert.vue";
+import ConfirmModal from "../../BaseComponents/ConfirmModal.vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
@@ -131,6 +137,7 @@ export default {
     BaseSpinner,
     BaseDialog,
     BaseAlert,
+    ConfirmModal,
     Multiselect,
     QuillEditor,
   },
@@ -151,7 +158,7 @@ export default {
       firstDelete: [],
       secondDelete: [],
       userData: [],
-
+      confirmModal: false,
       multiSelect: {
         mode: "tags",
         value: [],
@@ -176,9 +183,7 @@ export default {
       this.multiSelect.value.forEach((user) => {
         for (const key in this.userData) {
           if (this.userData[key].email === user) {
-            console.log("select user", this.userData[key]);
             const userId = this.userData[key].id;
-            console.log("select", userId);
             let obj = {};
             obj[userId] = false;
             this.userRead.push(obj);
@@ -187,8 +192,6 @@ export default {
           }
         }
       });
-      console.log("first delete", this.firstDelete);
-      console.log("second delete", this.secondDelete);
 
       try {
         this.$store.dispatch("mail/addMail", {
@@ -199,7 +202,7 @@ export default {
           draft: isDraft,
           read: this.userRead,
           subDelete: this.firstDelete,
-          delete: this.secondDelete
+          delete: this.secondDelete,
         });
 
         this.multiSelect.value = [];
@@ -210,10 +213,12 @@ export default {
         this.error = err.message;
       }
       this.isLoading = false;
+      window.location.reload();
     },
 
     async saveInbox() {
       this.inputIsValid = true;
+      this.confirmModal = false;
 
       if (
         this.multiSelect.value.length < 1 ||
@@ -248,14 +253,12 @@ export default {
       await this.$store.dispatch("user/findUser");
       this.sender = this.$store.getters["user/loggedInUser"];
 
-      //fetch all registered user email
       await this.$store.dispatch("user/loadUsers");
       const allUsers = this.$store.getters["user/allUsers"];
+
       for (const key in allUsers) {
         this.multiSelect.options.push(allUsers[key].email);
         this.userData.push(allUsers[key]);
-        console.log("all", allUsers[key].email);
-        console.log("userdata", this.userData);
       }
     } catch (err) {
       this.error = err.message;
@@ -265,9 +268,8 @@ export default {
 </script>
 
 <style src="@vueform/multiselect/themes/default.css">
-@media only screen and (min-width: 768px) {
-  .box {
-    width: 100rem;
-  }
+.box {
+  height: 200px;
+  width: auto;
 }
 </style>

@@ -2,7 +2,10 @@
   <the-header></the-header>
   <router-view v-slot="slotProps">
     <transition name="route" mode="out-in">
-      <component :is="slotProps.Component" class="container md:py-10"></component>
+      <component
+        :is="slotProps.Component"
+        class="container md:py-10"
+      ></component>
     </transition>
   </router-view>
 </template>
@@ -23,8 +26,7 @@ export default {
   },
   async created() {
     this.$store.dispatch("tryLogin");
-          await this.$store.dispatch("mail/loadMail");
-
+    await this.$store.dispatch("mail/loadMail");
   },
   watch: {
     didAutoLogout(curValue, oldValue) {

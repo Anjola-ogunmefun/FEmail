@@ -26,13 +26,13 @@
             ></path>
           </svg>
         </span>
-        <h1 class="text-xl font-bold px-4 truncate">{{ from }}</h1>
+        <h1 class="text-xl md:text-2xl font-bold px-4 truncate">{{ from }}</h1>
       </span>
       <div class="mb-4 ml-16">
-        <div class="text-black font-medium text-lg px-2 -mt-3 mb-2 truncate">
+        <div class="text-black font-medium text-lg md:text-2xl px-2 -mt-3 mb-2 truncate">
           {{ subject }}
         </div>
-        <p class="text-gray-600 text-base px-2 truncate max-w-full">
+        <p class="text-gray-600 text-base md:text-xl px-2 truncate max-w-full">
           {{ body }}
         </p>
       </div>
@@ -53,17 +53,13 @@ export default {
     };
   },
   mounted() {
-    // const inbox = this.$store.getters["mail/getInbox"];
-
     this.read.forEach((recepient) => {
       for (const key in recepient) {
         if (this.userData === key && recepient[key] === true) {
           this.isRead = true;
-          console.log('base', recepient[key])
-          return
+          return;
         }
       }
-      console.log("is read", this.isRead);
     });
   },
 };

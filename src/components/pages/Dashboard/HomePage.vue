@@ -17,7 +17,6 @@
             <path d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
-        <!-- <img src="../../../utils/logo2.png" alt="Logo" class="h-auto w-24" /> -->
       </div>
       <h1 class="flex text-lg font-semibold md:text-2xl md:ml-12">
         {{ userName }}
@@ -43,78 +42,6 @@
       >
         {{ unreadMail.length }}
       </span>
-
-      <!-- <div class="flex items-center">
-      <div class="hidden md:flex md:justify-between md:bg-transparent">
-        <button
-          title="Wishlist"
-          class="flex items-center p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
-        >
-          <svg
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            class="w-6 h-6 mr-2"
-          >
-            <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-          </svg>
-          <span>Wishlist</span>
-        </button>
-        <button
-          class="flex items-center p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
-        >
-          <svg
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            class="h-6 w-6"
-          >
-            <path
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-            ></path>
-          </svg>
-        </button>
-        <button
-          class="flex items-cente p-3 font-medium mr-2 text-center bg-gray-300 rounded  hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
-        >
-          <svg
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-        </button>
-        <a
-          rel="noopener"
-          href="https://www.buymeacoffee.com/fayazahmed"
-          target="_blank"
-          title="Help me keep this site alive"
-          class="flex items-center  px-3 py-3 font-medium mr-2 text-center bg-orange-600 rounded text-white hover:bg-orange-700 focus:outline-none focus:bg-orange-400"
-        >
-          <img
-            class="mr-2 h-6 w-auto"
-            src="/sidebar/bmc.svg"
-            alt="Buy Me Coffee"
-          />
-          <p class="font-bold">
-            Buy me a Coffee
-          </p></a
-        >
-      </div>
-    </div> -->
 
       <transition
         enter-class="opacity-0"
@@ -169,7 +96,7 @@
               ></path>
             </svg>
           </span>
-          <router-link to="/compose">Compose</router-link>
+          <router-link to="/compose" class="md:text-xl">Compose</router-link>
         </span>
 
         <span
@@ -191,7 +118,7 @@
             </svg>
           </span>
 
-          <router-link to="/inbox">Inbox</router-link>
+          <router-link to="/inbox" class="md:text-xl ">Inbox</router-link>
 
           <span
             class="bg-gray-800 hover:bg-white hover:text-black text-white font-bold px-2 ml-2 rounded-full"
@@ -219,7 +146,7 @@
               ></path>
             </svg>
           </span>
-          <router-link to="/sent">Sent</router-link>
+          <router-link to="/sent" class="md:text-xl">Sent</router-link>
         </span>
         <span
           @click="isOpen = false"
@@ -239,7 +166,7 @@
               ></path>
             </svg>
           </span>
-          <router-link to="/draft">Draft</router-link>
+          <router-link to="/draft" class="md:text-xl">Draft</router-link>
         </span>
         <span
           @click="isOpen = false"
@@ -259,29 +186,27 @@
               ></path>
             </svg>
           </span>
-          <router-link to="/bin">Bin</router-link>
+          <router-link to="/bin" class="md:text-xl">Bin</router-link>
         </span>
       </aside>
     </nav>
 
-
-    <!-- <h1 class="text-black font-semibold  text-xl ml-4 px-4 mt-6 -mb-3">Home</h1> -->
     <section>
-      <h1 class="text-black font-semibold  text-xl ml-3 px-4 mt-4 mb-3">
+      <h1
+        class="text-black font-semibold  text-xl md:text-3xl ml-3 px-4 mt-4 mb-3"
+      >
         Inbox
       </h1>
 
       <div v-if="myMail.length === 0 && !isLoading">
-          <p class="text-black font-medium text-lg px-4 mb-2 mt-24 text-center">
-            No mail for you yet!
-          </p>
-        </div>
+        <p
+          class="text-black font-medium text-lg md:text-2xl px-4 mb-2 mt-24 text-center"
+        >
+          No mail for you yet!
+        </p>
+      </div>
 
-      <transition
-        v-else-if="showContent"
-        enter-active-class="animate__animated animate__bounce "
-        leave-active-class="animate__animated animate__slideInUp"
-      >
+      <transition v-else-if="showContent">
         <mail-content :mail="selectedMail" @delete-mail="bin"></mail-content>
       </transition>
 
@@ -301,7 +226,6 @@
 
       <base-spinner v-if="isLoading && !error"></base-spinner>
     </section>
-    <!-- <inbox-page></inbox-page> -->
   </main>
 </template>
 
@@ -309,12 +233,11 @@
 import MailContent from "./MailContent.vue";
 import BaseSpinner from "../../BaseComponents/BaseSpinner.vue";
 import BaseTemplate from "../../BaseComponents/BaseTemplate.vue";
-// import InboxPage from "./InboxPage.vue";
 
 export default {
   props: ["from", "subject", "body", "read"],
 
-  components: { BaseSpinner, MailContent,BaseTemplate },
+  components: { BaseSpinner, MailContent, BaseTemplate },
 
   data() {
     return {
@@ -324,7 +247,7 @@ export default {
       loggedInUser: "",
       myMail: [],
       showContent: false,
-      selectedMail: JSON.stringify(null),
+      selectedMail: {},
       unreadMail: [],
       userName: "",
     };
@@ -338,7 +261,7 @@ export default {
       this.selectedMail = mail;
       this.showContent = true;
       await this.$store.dispatch("mail/removeUnread", mail);
-       mail.read.forEach((recepient) => {
+      mail.read.forEach((recepient) => {
         for (const key in recepient) {
           if (this.userData === key) {
             recepient[key] = true;
@@ -348,16 +271,15 @@ export default {
     },
     async bin(mail) {
       await this.$store.dispatch("mail/firstDelete", mail);
-         mail.forEach((recepient) => {
+      mail.subDelete.forEach((recepient) => {
         for (const key in recepient) {
           if (this.userData === key) {
             recepient[key] = true;
           }
         }
       });
-      // window.location.reload();
+      window.location.reload();
     },
-  
   },
   watch: {
     isOpen: {
@@ -371,9 +293,9 @@ export default {
     },
   },
   async mounted() {
-    // document.addEventListener("keydown", (e) => {
-    //   if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
-    // });
+    document.addEventListener("keydown", (e) => {
+      if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
+    });
 
     this.isLoading = true;
     try {
@@ -391,7 +313,6 @@ export default {
           this.userName = allUsers[key].firstName;
         }
       }
-      console.log("id", this.userData);
 
       for (let i = 0; i < inbox.length; i++) {
         inbox[i].to.forEach((person) => {
@@ -399,7 +320,6 @@ export default {
             this.myMail.push(inbox[i]);
           }
         });
-        console.log("this mail", this.myMail);
       }
       for (let i = 0; i < this.myMail.length; i++) {
         this.myMail[i].read.forEach((recepient) => {

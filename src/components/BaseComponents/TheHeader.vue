@@ -12,14 +12,6 @@
         />
       </div>
       <ul class="flex mt-28 mb-2 md:mt-56 ml-10">
-        <!-- <li class="md:mr-6 mr-0">
-          <router-link
-            class="bg-black text-white font-serif text-xs md:text-xl px-4 md:px-7 py-2 rounded-full hover:bg-gray-700 hover:-translate-y-1 focus:outline-none focus:ring focus:ring-offset-1 focus:ring-gray-500 active:bg-black"
-            to="/"
-            v-if="!isLoading && isLoggedIn"
-            >Home</router-link
-          >
-        </li> -->
         <li class="">
           <router-link
             v-if="!isLoggedIn"
@@ -29,12 +21,13 @@
           >
         </li>
         <li class="mr-6 md:-mr-24">
-          <a class=" bg-black text-white font-serif text-xs md:text-xl px-4 md:px-6 py-2 rounded-full hover:bg-gray-700 hover:-translate-y-1 focus:outline-none focus:ring focus:ring-offset-1 focus:ring-gray-500 active:bg-black cursor-pointer"
+          <a
+            class=" bg-black text-white font-serif text-xs md:text-xl px-4 md:px-6 py-2 rounded-full hover:bg-gray-700 hover:-translate-y-1 focus:outline-none focus:ring focus:ring-offset-1 focus:ring-gray-500 active:bg-black cursor-pointer"
             v-if="!isLoading && isLoggedIn"
-            @click="logout">
+            @click="logout"
+          >
             Logout
           </a>
-          
         </li>
       </ul>
     </div>
