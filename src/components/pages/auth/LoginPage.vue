@@ -62,7 +62,7 @@
           Log-in
         </button>
       </div>
-      <div class="text-center -mt-32">
+      <div class="text-center -mt-24">
         <p>Dont have an account?</p>
         <router-link to="/register" class="underline text-blue-600"
           >sign up</router-link
