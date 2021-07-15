@@ -56,14 +56,20 @@
         </div>
 
         <button
-          class="md:ml-48 ml-20 mt-10 w-1/2 bg-gray-800 hover:bg-gray-700 hover:-translate-y-1 transform transition focus:outline-none focus:ring focus:ring-offset-2 focus:ring-gray-500 active:bg-black text-white font-serif md:text-2xl text-xl rounded-full cursor-pointer"
+          class="md:ml-48 ml-20 mt-8 w-1/2 bg-gray-800 hover:bg-gray-700 hover:-translate-y-1 transform transition focus:outline-none focus:ring focus:ring-offset-2 focus:ring-gray-500 active:bg-black text-white font-serif md:text-2xl text-xl rounded-full cursor-pointer"
           @click.prevent="loginUser"
         >
           Log-in
         </button>
-
-        <base-spinner v-if="!error && isLoading"></base-spinner>
       </div>
+      <div class="text-center -mt-32">
+        <p>Dont have an account?</p>
+        <router-link to="/register" class="underline text-blue-600"
+          >sign up</router-link
+        >
+      </div>
+
+      <base-spinner v-if="!error && isLoading"></base-spinner>
     </section>
   </main>
 </template>
